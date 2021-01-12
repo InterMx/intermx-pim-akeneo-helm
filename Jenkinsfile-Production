@@ -285,7 +285,7 @@ node {
          */
         stage('Build Image for Production') {
 
-            app = docker.build(ecrRepoName, "-f Dockerfile.Production --build-arg env=${environment} --network host .")
+            app = docker.build(ecrRepoName, "-f Dockerfile --build-arg env=${environment} --network host .")
         }
 
         /**
