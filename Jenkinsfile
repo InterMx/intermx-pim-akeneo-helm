@@ -31,7 +31,7 @@ def helmDeploy(Map args) {
         if (args.dry_run) {
             println "Running dry-run deployment"
 
-            sh "/usr/local/bin/helm install --dry-run --debug -n ${args.name} ${args.chart_dir} --set build=${args.commit_id},image.repository=${args.repo},image.tag=${args.tag},version=${args.version},config.directory=config/${args.namespace},ingress.type=${INGRESS_VERSION} --namespace=${args.namespace}"
+            sh "/usr/local/bin/helm install --dry-run --debug ${args.name} ${args.chart_dir} --set build=${args.commit_id},image.repository=${args.repo},image.tag=${args.tag},version=${args.version},config.directory=config/${args.namespace},ingress.type=${INGRESS_VERSION} --namespace=${args.namespace}"
         } else {
 
             println "Running deployment"
@@ -44,16 +44,9 @@ def helmDeploy(Map args) {
     catch(exception) {
 
         // Slack notification failure.
-        notifyBuild('FAILURE', null, null, "Error in pushing image to `${args.namespace}` Kubernetes - Retrying.", args.notify, args.slack_channel)
+        notifyBuild('FAILURE', null, null, "Error in pushing image to `${args.namespace}` Kubernetes.", args.notify, args.slack_channel)
 
         println "Error on Upgrade / Install"
-        println "Deleting the resource"
-        sh "/usr/local/bin/helm del --purge ${args.name} --tiller-namespace=${args.namespace}"
-
-        println "Running deployment again"
-        sh "/usr/local/bin/helm upgrade --install ${args.name} ${args.chart_dir} --set build=${args.commit_id},image.repository=${args.repo},image.tag=${args.tag},version=${args.version},config.directory=config/${args.namespace},ingress.type=${INGRESS_VERSION} --tiller-namespace=${args.namespace} --namespace=${args.namespace}"
-
-        echo "Application ${args.name} successfully deployed. Use helm status ${args.name} to check."
     }
 }
 
