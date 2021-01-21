@@ -27,15 +27,15 @@ def helmLint(Map args) {
 def helmDeploy(Map args) {
     try {
 
-        // Configure helm client and confirm tiller process is installed
+        // Configure helm client
         if (args.dry_run) {
             println "Running dry-run deployment"
 
-            sh "/usr/local/bin/helm install --dry-run --debug -n ${args.name} ${args.chart_dir} --set build=${args.commit_id},image.repository=${args.repo},image.tag=${args.tag},version=${args.version},config.directory=config/${args.namespace},ingress.type=${INGRESS_VERSION} --tiller-namespace=${args.namespace} --namespace=${args.namespace}"
+            sh "/usr/local/bin/helm install --dry-run --debug -n ${args.name} ${args.chart_dir} --set build=${args.commit_id},image.repository=${args.repo},image.tag=${args.tag},version=${args.version},config.directory=config/${args.namespace},ingress.type=${INGRESS_VERSION} --namespace=${args.namespace}"
         } else {
 
             println "Running deployment"
-            sh "/usr/local/bin/helm upgrade --install ${args.name} ${args.chart_dir} --set build=${args.commit_id},image.repository=${args.repo},image.tag=${args.tag},version=${args.version},config.directory=config/${args.namespace},ingress.type=${INGRESS_VERSION} --tiller-namespace=${args.namespace} --namespace=${args.namespace}"
+            sh "/usr/local/bin/helm upgrade --install ${args.name} ${args.chart_dir} --set build=${args.commit_id},image.repository=${args.repo},image.tag=${args.tag},version=${args.version},config.directory=config/${args.namespace},ingress.type=${INGRESS_VERSION} --namespace=${args.namespace}"
 
             echo "Application ${args.name} successfully deployed. Use helm status ${args.name} to check."
         }
@@ -89,7 +89,7 @@ def showChangeLogs() {
                     isParent = true
                     break
                 case 'intermx-cicd-helm':
-                    sourceDirs = ['product-management-service']
+                    sourceDirs = ['pim-service']
                     break
             }
 
@@ -186,7 +186,7 @@ node {
     // Config.json file
     def config
     // Component specific variables builds
-    def component = "product-management-service"
+    def component = "pim-service"
     def cluster
     def environment
     def chartDirectory
@@ -205,7 +205,7 @@ node {
     // AWS Credentials
     def awsCredentials = "intermx-impinger-credentials"
     // ECR Repository
-    def ecrRepoName = "intermx-product-management-service"
+    def ecrRepoName = "intermx-pim-service"
     // ECR Repository Endpoint
     def ecrEndpoint = "https://${awsAccountId}.dkr.ecr.us-east-1.amazonaws.com"
     // ECR FQDN
@@ -275,7 +275,7 @@ node {
                 }
             }
 
-            dir("/tls") {
+            dir("tls") {
                 withAWS(credentials:awsCredentials) {
                     s3Download(file: 'apache-selfsigned.crt', bucket: configBucket, path: "${s3ConfigPath}/apache-selfsigned.crt", force: true)
                     s3Download(file: 'apache-selfsigned.key', bucket: configBucket, path: "${s3ConfigPath}/apache-selfsigned.key", force: true)
