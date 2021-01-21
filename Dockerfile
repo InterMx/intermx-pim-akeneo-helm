@@ -18,7 +18,7 @@ WORKDIR /app
 RUN php -d memory_limit=4G /usr/local/bin/composer create-project --prefer-dist akeneo/pim-community-standard . "3.0.*@stable" \
     && rm -rf /app/var/*
 
-COPY parameters.yml /app/app/config/parameters.yml
+COPY ./tls/parameters.yml /app/app/config/parameters.yml
 
 # NodeJS
 FROM node:10 AS js-builder

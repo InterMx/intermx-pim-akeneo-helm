@@ -174,7 +174,7 @@ node {
     // Config.json file
     def config
     // Component specific variables builds
-    def component = "product-management-service"
+    def component = "pim-service"
     def cluster = "live"
     def environment = "production"
     def chartDirectory
@@ -192,7 +192,7 @@ node {
     def awsCredentials = "intermx-impinger-credentials"
     // ECR Repository
     def ecrRepo     = "${awsAccountId}.dkr.ecr.us-east-1.amazonaws.com"
-    def ecrRepoName = "intermx-product-management-service"
+    def ecrRepoName = "intermx-pim-service"
     // ECR Repository Endpoint
     def ecrEndpoint = "https://${awsAccountId}.dkr.ecr.us-east-1.amazonaws.com"
     // ECR FQDN
@@ -248,13 +248,22 @@ node {
                     s3Download(file: 'ilm_policy.json', bucket: configBucket, path: "${s3ConfigPath}/ilm_policy.json", force: true)
                 }
             }
+
+            dir("tls") {
+                withAWS(credentials:awsCredentials) {
+                    s3Download(file: 'apache-selfsigned.crt', bucket: configBucket, path: "${s3ConfigPath}/apache-selfsigned.crt", force: true)
+                    s3Download(file: 'apache-selfsigned.key', bucket: configBucket, path: "${s3ConfigPath}/apache-selfsigned.key", force: true)
+                    s3Download(file: 'dhparam.pem', bucket: configBucket, path: "${s3ConfigPath}/dhparam.pem", force: true)
+                    s3Download(file: 'parameters.yml', bucket: configBucket, path: "${s3ConfigPath}/parameters.yml", force: true)
+                }
+            }
         }
 
         /**
          * Environment variables for Kubernetes (Production).
          *
          */
-        stage('Build Kubernetes Env Variables From Config for Production') {
+        /* stage('Build Kubernetes Env Variables From Config for Production') {
 
             config = readJSON file: "${configFile}"
 
@@ -263,7 +272,7 @@ node {
                     writeFile file: "${entry.key}", text: "${entry.value}"
                 }
             }
-        }
+        } */
 
         /**
          * Set Unique Tag.
