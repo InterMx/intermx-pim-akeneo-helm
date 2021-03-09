@@ -393,7 +393,7 @@ node {
  *
  */
 def notifyBuild(buildStatus = 'FAILURE', branch = null, commitMessage = null, message = null, notify = null, channel = null) {
-
+return
     // Default values
     def summary
     def alert   = false

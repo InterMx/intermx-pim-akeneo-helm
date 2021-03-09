@@ -15,7 +15,7 @@ RUN apt-get install php7.2-cli php7.2-apcu php7.2-bcmath php7.2-curl php7.2-fpm 
 
 WORKDIR /app
 
-RUN php -d memory_limit=4G /usr/local/bin/composer create-project --prefer-dist akeneo/pim-community-standard . "3.0.*@stable" \
+RUN php -d memory_limit=4G /usr/local/bin/composer create-project --prefer-dist akeneo/pim-community-standard . "3.2.*@stable" \
     && rm -rf /app/var/*
 
 COPY ./tls/parameters.yml /app/app/config/parameters.yml
