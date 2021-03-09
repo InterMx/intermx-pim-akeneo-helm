@@ -190,7 +190,7 @@ node {
     // Helm Repository
     def helmRepo = "git@github.com:InterMx/intermx-cicd-helm.git"
     // Helm Branch
-    def helmBranch = 'test'
+    def helmBranch = 'delivery'
     // S3 Config Bucket
     def configBucket = "${AWS_BUCKET_NAME}"
     // AWS Account ID
